@@ -1,0 +1,68 @@
+#include <pic.h>
+
+char command1='R',command2='L',command3='S';
+char positionCommand;
+
+void delay(int count) 
+{
+    while(count--);
+}
+
+void transmitter(char TX)
+{
+    TXREG=TX;
+    while(TXIF==0);
+    TXIF=0;
+}
+
+char receiver() 
+{
+    while(RCIF==0);
+    char RX=RCREG;
+    RCIF=0;
+    return RX;
+}
+
+void transmitString(char *str) 
+{
+    while(*str) 
+	{
+        transmitter(*str);
+        str++;
+    }
+}
+
+void main()
+{
+	    TRISD=0x00;
+	    PORTD=0x00;
+	 	TRISC=0x80;
+	    PORTC=0x00;
+	    PORTC=0x00;
+	    ANSEL=0x00;
+	    ANSELH=0x00;
+	    TXSTA=0x24;
+	    RCSTA=0x90;
+	    SPBRG=25;
+	
+	    while(1) 
+		{   
+	     transmitString("Enter Position");
+	     positionCommand=receiver();
+	     if(positionCommand==command1) //R
+	     {
+	         RD0=0;
+	         RD1=1;
+	     } 
+	     if(positionCommand==command2) //L
+	     {
+	        RD0 = 1;
+	        RD1 = 0;
+	     }
+	      if(positionCommand==command3) 
+	     {
+	        RD0 = 0;
+	        RD1 = 0;
+	     }  
+	}
+}	
